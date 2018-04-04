@@ -7,9 +7,10 @@ my %edge_list_h;
 my @reactions_sort;
 my @protlist_sort;
 
-# 
-# sub txt_to_graphml{
-my $file="./network_only_pelin_godata.txt";
+# define the text file containing the network information
+# has to fit the structure:
+# node1 \t {activation|inhibition} \t node2
+my $file="./network_template.txt"; 
 
 open (TXT,$file) or die $!;
 ###	building species list
@@ -18,7 +19,8 @@ my $re_id=0;
 while (my $txt=<TXT>)
   {
   chomp $txt;
- ######################	listOfIncludedSpecies
+  
+# build listOfIncludedSpecies
     if ($txt=~/^(.+)?\sactivation\s(.+)$/ || $txt=~/^(.+)?\sinhibition\s(.+)$/){
       if ($species_list_h{$1} && $species_list_h{$2}){
       }
@@ -41,11 +43,8 @@ while (my $txt=<TXT>)
   }
 close TXT;
 
-# print Dumper(\%species_list_h);
-# }
 
-    
-######################	 listOfReactions   
+# build listOfReactions   
 open (TXT,$file) or die $!."\n File could not be found!\n";
   while (my $txt2=<TXT>){
 #   print "$txt2\n";
@@ -80,8 +79,6 @@ if (defined $edge && defined $reactand && defined $product)
     }
   }
 
-print Dumper(\%edge_list_h);
-
 @reactions_sort = sort { $a <=> $b } (keys %edge_list_h);
 
 @protlist_sort = sort { $species_list_h{$a} <=> $species_list_h{$b} } (keys %species_list_h);
@@ -100,10 +97,6 @@ Reac_sub();
 close_out();
 close OUT or die $!;
 print "\nOutput was saved to \">./$f1.graphml\".\n\n";
-
-
-####################################################################
-
 
 ###############################
 ##	subroutines for txt-to-graphml-converter
